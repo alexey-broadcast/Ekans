@@ -21,10 +21,10 @@ function Snake() {
 }
 
 Snake.direction = {
-    up:     0,
-    down:   1,
-    left:   2,
-    right:  3
+    left:  37,
+    up:    38,
+    right: 39,
+    down:  40
 }
 
 
@@ -98,25 +98,10 @@ Scene.prototype.onTick = function() {
 }
 
 Scene.prototype.onKeyPressed = function (keyEvent) {
-    console.log(keyEvent.keyIdentifier);
-    switch (keyEvent.keyIdentifier) {
-        case "Left":
-            if(this.snake.dir !== Snake.direction.right)
-                this.snake.dir = Snake.direction.left;
-            break;
-        case "Right":
-            if (this.snake.dir !== Snake.direction.left)
-                this.snake.dir = Snake.direction.right;
-            break;
-        case "Up":
-            if (this.snake.dir !== Snake.direction.down)
-                this.snake.dir = Snake.direction.up;
-            break;
-        case "Down":
-            if (this.snake.dir !== Snake.direction.up)
-                this.snake.dir = Snake.direction.down;
-            break;
-    }
+    console.log();
+    
+    if(Math.abs(keyEvent.keyCode - this.snake.dir) % 2)
+        this.snake.dir = keyEvent.keyCode;
 
     this.onTick();
 }
