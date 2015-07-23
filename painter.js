@@ -1,24 +1,27 @@
-function Painter() {
+//resolution - count of logical blocks in width and height
+//rectSize - size of logical block in pixels
+function Painter(resolution, rectSize) {
     this.canvas = document.getElementById('canvas');
     this.context = this.canvas.getContext('2d');
-    this.rectSize = 25;
-
-    this.canvas.height = 500;
-    this.canvas.width = 500;
+    this.rectSize = rectSize;
+    this.resolution = resolution;
+    
+    this.canvas.style.height = this.canvas.height = rectSize * resolution;
+    this.canvas.style.width  = this.canvas.width  = rectSize * resolution;
 };
 
 Painter.colors = {
     apple:      '#15C23C',
     snake:      '#007ACC',
-    background: '#1E1E1E'
+    background: '#3F3F46'
 }
 
 Painter.prototype.drawRect = function(x, y) {
-    if(x < 0 || x > 19 || x === undefined) {
+    if(x < 0 || x >= this.resolution || x === undefined) {
         console.log('x='+x+' is not valid! return');
         return;
     }
-    if(y < 0 || y > 19 || y === undefined) {
+    if(y < 0 || y >= this.resolution || y === undefined) {
         console.log('y='+y+' is not valid! return');
         return;
     }
@@ -30,20 +33,20 @@ Painter.prototype.drawRect = function(x, y) {
 };
 
 Painter.prototype.drawCircle = function (x, y) {
-    console.log('drawCircle');
-    if (x < 0 || x > 19 || x === undefined) {
+    if (x < 0 || x >= this.resolution || x === undefined) {
         console.log('x=' + x + ' is not valid! return');
         return;
     }
-    if (y < 0 || y > 19 || y === undefined) {
+    if (y < 0 || y >= this.resolution || y === undefined) {
         console.log('y=' + y + ' is not valid! return');
         return;
     }
     
     var _x = x * this.rectSize + this.rectSize * 0.5;
     var _y = y * this.rectSize + this.rectSize * 0.5;
-    var _radius = this.rectSize * 0.5;
+    var _radius = this.rectSize * 0.5 - 1;
     this.context.fillStyle = Painter.colors.apple;
+    this.context.beginPath();
     this.context.arc(_x, _y, _radius, 0, 2 * Math.PI, false);
     this.context.fill();
 }
@@ -54,7 +57,6 @@ Painter.prototype.drawBlock = function(block) {
 
 // list - array of Block instances
 Painter.prototype.drawBlocks = function(list) {
-    this.clear();
     this.context.fillStyle = Painter.colors.snake;
     if(!Array.isArray(list)) {
         console.log('drawBlocks: list is not array!');

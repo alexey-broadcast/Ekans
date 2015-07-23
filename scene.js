@@ -27,9 +27,49 @@ Snake.direction = {
     right:  3
 }
 
-Snake.prototype.move = function () {
-    var head = Object.create(this.blocks[0]);
-    switch (this.dir) {
+
+
+
+/////////////////////////////////////////////////////
+
+function Scene() {
+    this.rectSize = 25;
+    this.resolution = 5;
+    this.painter = new Painter(this.resolution, this.rectSize);
+    this.snake = new Snake();
+    this.apple = this.generateApple();
+}
+
+Scene.prototype.generateApple = function () {
+    var generateRandom = (function () {
+        return (Math.random() * this.resolution) ^ 0;
+    }).bind(this);
+    
+    var apple = new Block(generateRandom(), generateRandom());
+    
+    var isAppleValid = (function () {
+        console.log("isAppleValid: " + apple);
+        for (block of this.snake.blocks) {
+            if (block.x == apple.x && block.y == apple.y) {
+                console.log("not ok!");
+                return false;
+            }
+        }
+        console.log("TRUE!")
+        return true;
+    }).bind(this);
+
+    console.log("search in " + this.snake.blocks);
+    while (!isAppleValid()) {
+        apple = new Block(generateRandom(), generateRandom());
+    }
+
+    return apple;
+}
+
+Scene.prototype.move = function () {
+    var head = Object.create(this.snake.head);
+    switch (this.snake.dir) {
         case Snake.direction.right:
             head.x++;
             break;
@@ -42,24 +82,23 @@ Snake.prototype.move = function () {
         case Snake.direction.down:
             head.y++;
     }
-    this.blocks.pop();
-    this.blocks.unshift(head);
-}
+    this.snake.blocks.unshift(head);
 
-
-
-function Scene() {
-    this.painter = new Painter();
-    this.snake = new Snake();
+    if (head.x === this.apple.x && head.y === this.apple.y)
+        this.apple = this.generateApple();
+    else
+        this.snake.blocks.pop();
 }
 
 Scene.prototype.onTick = function() {
-    this.snake.move();
+    this.move();
+    this.painter.clear();
     this.painter.drawBlocks(this.snake.blocks);
-    this.painter.drawCircle(5, 5);
+    this.painter.drawCircle(this.apple.x, this.apple.y);
 }
 
 Scene.prototype.onKeyPressed = function (keyEvent) {
+    console.log(keyEvent.keyIdentifier);
     switch (keyEvent.keyIdentifier) {
         case "Left":
             if(this.snake.dir !== Snake.direction.right)
