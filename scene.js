@@ -56,22 +56,26 @@ function Scene() {
 Scene.prototype.onTick = function() {
     this.snake.move();
     this.painter.drawBlocks(this.snake.blocks);
+    this.painter.drawCircle(5, 5);
 }
 
 Scene.prototype.onKeyPressed = function (keyEvent) {
-    console.log(keyEvent);
     switch (keyEvent.keyIdentifier) {
         case "Left":
-            this.snake.dir = Snake.direction.left;
+            if(this.snake.dir !== Snake.direction.right)
+                this.snake.dir = Snake.direction.left;
             break;
         case "Right":
-            this.snake.dir = Snake.direction.right;
+            if (this.snake.dir !== Snake.direction.left)
+                this.snake.dir = Snake.direction.right;
             break;
         case "Up":
-            this.snake.dir = Snake.direction.up;
+            if (this.snake.dir !== Snake.direction.down)
+                this.snake.dir = Snake.direction.up;
             break;
         case "Down":
-            this.snake.dir = Snake.direction.down;
+            if (this.snake.dir !== Snake.direction.up)
+                this.snake.dir = Snake.direction.down;
             break;
     }
 
