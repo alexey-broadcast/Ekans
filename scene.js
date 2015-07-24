@@ -88,6 +88,10 @@ Scene.prototype.move = function () {
         this.apple = this.generateApple();
     else
         this.snake.blocks.pop();
+
+    if (head.x < 0 || head.x >= this.resolution 
+        || head.y < 0 || head.y >= this.resolution)
+        console.log('GAME OVER!');
 }
 
 Scene.prototype.onTick = function() {
@@ -95,12 +99,21 @@ Scene.prototype.onTick = function() {
     this.painter.clear();
     this.painter.drawBlocks(this.snake.blocks);
     this.painter.drawCircle(this.apple.x, this.apple.y);
+
+    //var arr = [new Block(0, 0), new Block(0, 1), new Block(0, 2)];
+    //console.log("SHAPE: "+this.painter.getShape(arr[1], arr[0], arr[2]));
 }
 
 Scene.prototype.onKeyPressed = function (keyEvent) {
-    console.log();
+    var code = keyEvent.keyCode;
     
-    if(Math.abs(keyEvent.keyCode - this.snake.dir) % 2)
+    //PAPA todelete>>
+    if (code < 37 || code > 40)
+        return;
+    //PAPA<<
+
+    if (Math.abs(code - this.snake.dir) % 2
+        && code > 36 && code < 41)
         this.snake.dir = keyEvent.keyCode;
 
     this.onTick();
