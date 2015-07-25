@@ -8,9 +8,41 @@ Block.prototype.toString = function() {
     return '('+this.x+', '+this.y+')';
 }
 
+function SnakeBlock(x, y, dir) {
+    Block.apply(this, arguments);
+
+    this.dir = dir;
+}
+
+SnakeBlock.prototype = Object.create(Block.prototype);
+SnakeBlock.prototype.constructor = SnakeBlock;
+
+
+/////////////////////////////////////////////////////
+
 
 function Snake() {
-    this.blocks = [new Block(0, 0), new Block(0, 1), new Block(0, 2)];
+    this.blocks = [new SnakeBlock(0, 0, Snake.direction.up), 
+        new SnakeBlock(0, 1, Snake.direction.up), 
+        new SnakeBlock(0, 2, Snake.direction.up), 
+        new SnakeBlock(0, 3, Snake.direction.up), 
+        new SnakeBlock(0, 4, Snake.direction.up), 
+        new SnakeBlock(0, 5, Snake.direction.up), 
+        new SnakeBlock(0, 6, Snake.direction.up), 
+        new SnakeBlock(0, 7, Snake.direction.up), 
+        new SnakeBlock(0, 8, Snake.direction.up), 
+        new SnakeBlock(0, 9, Snake.direction.up), 
+        new SnakeBlock(0, 10, Snake.direction.up),
+        new SnakeBlock(0, 11, Snake.direction.up), 
+        new SnakeBlock(0, 12, Snake.direction.up), 
+        new SnakeBlock(0, 13, Snake.direction.up), 
+        new SnakeBlock(0, 14, Snake.direction.up), 
+        new SnakeBlock(0, 15, Snake.direction.up), 
+        new SnakeBlock(0, 16, Snake.direction.up), 
+        new SnakeBlock(0, 17, Snake.direction.up), 
+        new SnakeBlock(0, 18, Snake.direction.up), 
+        new SnakeBlock(0, 19, Snake.direction.up) 
+    ];
     this.dir = Snake.direction.right;
 
     Object.defineProperty(this, 'head', {
@@ -32,12 +64,17 @@ Snake.direction = {
 
 /////////////////////////////////////////////////////
 
-function Scene() {
-    this.rectSize = 25;
-    this.resolution = 5;
+function Scene(resolution, rectSize) {
+    this.resolution = resolution;
+    this.rectSize = rectSize;
+    
     this.painter = new Painter(this.resolution, this.rectSize);
     this.snake = new Snake();
     this.apple = this.generateApple();
+
+    this.painter.clear();
+    this.painter.drawSnake(this.snake.blocks);
+    this.painter.drawCircle(this.apple.x, this.apple.y);
 }
 
 Scene.prototype.generateApple = function () {
@@ -47,24 +84,23 @@ Scene.prototype.generateApple = function () {
     
     var apple = new Block(generateRandom(), generateRandom());
     
-    var isAppleValid = (function () {
-        console.log("isAppleValid: " + apple);
-        for (block of this.snake.blocks) {
-            if (block.x == apple.x && block.y == apple.y) {
-                console.log("not ok!");
-                return false;
-            }
-        }
-        console.log("TRUE!")
-        return true;
-    }).bind(this);
-
-    console.log("search in " + this.snake.blocks);
-    while (!isAppleValid()) {
+    while (!this.isBlockValid(apple)) {
         apple = new Block(generateRandom(), generateRandom());
     }
 
     return apple;
+}
+
+Scene.prototype.isBlockValid = function(block) {
+    for (var snakeBlock of this.snake.blocks)
+        if(block.x === snakeBlock.x && block.y === snakeBlock.y)
+            return false;
+    
+    if (block.x < 0 || block.x >= this.resolution 
+        || block.y < 0 || block.y >= this.resolution)
+        return false;
+
+    return true;
 }
 
 Scene.prototype.move = function () {
@@ -82,6 +118,7 @@ Scene.prototype.move = function () {
         case Snake.direction.down:
             head.y++;
     }
+    head.dir = this.snake.dir;
     this.snake.blocks.unshift(head);
 
     if (head.x === this.apple.x && head.y === this.apple.y)
@@ -97,20 +134,12 @@ Scene.prototype.move = function () {
 Scene.prototype.onTick = function() {
     this.move();
     this.painter.clear();
-    this.painter.drawBlocks(this.snake.blocks);
+    this.painter.drawSnake(this.snake.blocks);
     this.painter.drawCircle(this.apple.x, this.apple.y);
-
-    //var arr = [new Block(0, 0), new Block(0, 1), new Block(0, 2)];
-    //console.log("SHAPE: "+this.painter.getShape(arr[1], arr[0], arr[2]));
 }
 
 Scene.prototype.onKeyPressed = function (keyEvent) {
     var code = keyEvent.keyCode;
-    
-    //PAPA todelete>>
-    if (code < 37 || code > 40)
-        return;
-    //PAPA<<
 
     if (Math.abs(code - this.snake.dir) % 2
         && code > 36 && code < 41)
