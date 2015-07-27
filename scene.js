@@ -8,42 +8,80 @@ Block.prototype.toString = function() {
     return '('+this.x+', '+this.y+')';
 }
 
-function SnakeBlock(x, y, dir) {
+function SnakeBlock(x, y, before) {
     Block.apply(this, arguments);
-
-    this.dir = dir;
+    this.setShape(before);
 }
 
 SnakeBlock.prototype = Object.create(Block.prototype);
 SnakeBlock.prototype.constructor = SnakeBlock;
 
+SnakeBlock.SHAPE_LEFT   = 1;
+SnakeBlock.SHAPE_UP     = 2;
+SnakeBlock.SHAPE_RIGHT  = 4;
+SnakeBlock.SHAPE_DOWN   = 8;
+
+
+SnakeBlock.prototype.setShape = function (before) {
+    if (before === undefined || this.shape === undefined) {
+        this.shape = 0;
+        return;
+    }
+    this.shape = 0;
+
+    if (before.x == this.x) {
+        if (before.y < this.y) {
+            this.shape |= SnakeBlock.SHAPE_UP;
+            before.shape |= SnakeBlock.SHAPE_DOWN;
+        }
+        else {
+            this.shape |= SnakeBlock.SHAPE_DOWN;
+            before.shape |= SnakeBlock.SHAPE_UP;
+        }
+    }
+    
+    if (before.y == this.y) {
+        if (before.x < this.x) {
+            this.shape |= SnakeBlock.SHAPE_LEFT;
+            before.shape |= SnakeBlock.SHAPE_RIGHT;
+        }
+        else {
+            this.shape |= SnakeBlock.SHAPE_RIGHT;
+            before.shape |= SnakeBlock.SHAPE_LEFT;
+        }
+    }
+}
 
 /////////////////////////////////////////////////////
 
 
 function Snake() {
-    this.blocks = [new SnakeBlock(0, 0, Snake.direction.up), 
-        new SnakeBlock(0, 1, Snake.direction.up), 
-        new SnakeBlock(0, 2, Snake.direction.up), 
-        new SnakeBlock(0, 3, Snake.direction.up), 
-        new SnakeBlock(0, 4, Snake.direction.up), 
-        new SnakeBlock(0, 5, Snake.direction.up), 
-        new SnakeBlock(0, 6, Snake.direction.up), 
-        new SnakeBlock(0, 7, Snake.direction.up), 
-        new SnakeBlock(0, 8, Snake.direction.up), 
-        new SnakeBlock(0, 9, Snake.direction.up), 
-        new SnakeBlock(0, 10, Snake.direction.up),
-        new SnakeBlock(0, 11, Snake.direction.up), 
-        new SnakeBlock(0, 12, Snake.direction.up), 
-        new SnakeBlock(0, 13, Snake.direction.up), 
-        new SnakeBlock(0, 14, Snake.direction.up), 
-        new SnakeBlock(0, 15, Snake.direction.up), 
-        new SnakeBlock(0, 16, Snake.direction.up), 
-        new SnakeBlock(0, 17, Snake.direction.up), 
-        new SnakeBlock(0, 18, Snake.direction.up), 
-        new SnakeBlock(0, 19, Snake.direction.up) 
+    this.blocks = [new SnakeBlock(0, 0), 
+        new SnakeBlock(0, 1), 
+        new SnakeBlock(0, 2), 
+        new SnakeBlock(0, 3), 
+        new SnakeBlock(0, 4), 
+        new SnakeBlock(0, 5), 
+        new SnakeBlock(0, 6), 
+        new SnakeBlock(0, 7), 
+        new SnakeBlock(0, 8), 
+        new SnakeBlock(0, 9), 
+        new SnakeBlock(0, 10),
+        new SnakeBlock(0, 11), 
+        new SnakeBlock(0, 12), 
+        new SnakeBlock(0, 13), 
+        new SnakeBlock(0, 14), 
+        new SnakeBlock(0, 15), 
+        new SnakeBlock(0, 16), 
+        new SnakeBlock(0, 17), 
+        new SnakeBlock(0, 18), 
+        new SnakeBlock(0, 19)
     ];
-    this.dir = Snake.direction.right;
+    
+    for (var i = 0; i < this.blocks.length; ++i)
+        this.blocks[i].setShape(this.blocks[i - 1]);
+
+    this.dir = Snake.DIRECTION_RIGHT;
 
     Object.defineProperty(this, 'head', {
         get: function () {
@@ -52,12 +90,15 @@ function Snake() {
     });
 }
 
-Snake.direction = {
-    left:  37,
-    up:    38,
-    right: 39,
-    down:  40
+Snake.prototype.cleanTailShape = function () {
+    var tailInd = this.blocks.length - 1;
+    this.blocks[tailInd].setShape(this.blocks[tailInd - 1]);
 }
+
+Snake.DIRECTION_LEFT  = 37;
+Snake.DIRECTION_UP    = 38;
+Snake.DIRECTION_RIGHT = 39;
+Snake.DIRECTION_DOWN  = 40;
 
 
 
@@ -84,21 +125,21 @@ Scene.prototype.generateApple = function () {
     
     var apple = new Block(generateRandom(), generateRandom());
     
-    while (!this.isBlockValid(apple)) {
+    while (!this.isEmptyBlock(apple)) {
         apple = new Block(generateRandom(), generateRandom());
     }
 
     return apple;
 }
 
-Scene.prototype.isBlockValid = function(block) {
-    for (var snakeBlock of this.snake.blocks)
-        if(block.x === snakeBlock.x && block.y === snakeBlock.y)
-            return false;
-    
+Scene.prototype.isEmptyBlock = function (block) {
     if (block.x < 0 || block.x >= this.resolution 
         || block.y < 0 || block.y >= this.resolution)
         return false;
+
+    for (var i in this.snake.blocks)
+        if(block.x === this.snake.blocks[i].x && block.y === this.snake.blocks[i].y)
+            return false;
 
     return true;
 }
@@ -106,29 +147,31 @@ Scene.prototype.isBlockValid = function(block) {
 Scene.prototype.move = function () {
     var head = Object.create(this.snake.head);
     switch (this.snake.dir) {
-        case Snake.direction.right:
+        case Snake.DIRECTION_RIGHT:
             head.x++;
             break;
-        case Snake.direction.left:
+        case Snake.DIRECTION_LEFT:
             head.x--;
             break;
-        case Snake.direction.up:
+        case Snake.DIRECTION_UP:
             head.y--;
             break;
-        case Snake.direction.down:
+        case Snake.DIRECTION_DOWN:
             head.y++;
     }
-    head.dir = this.snake.dir;
+    
+    if (!this.isEmptyBlock(head))
+        console.log('GAME OVER!!!');
+    
+    head.setShape(this.snake.head);
     this.snake.blocks.unshift(head);
 
     if (head.x === this.apple.x && head.y === this.apple.y)
         this.apple = this.generateApple();
-    else
+    else {
         this.snake.blocks.pop();
-
-    if (head.x < 0 || head.x >= this.resolution 
-        || head.y < 0 || head.y >= this.resolution)
-        console.log('GAME OVER!');
+        this.snake.cleanTailShape();
+    }
 }
 
 Scene.prototype.onTick = function() {
@@ -144,6 +187,7 @@ Scene.prototype.onKeyPressed = function (keyEvent) {
     if (Math.abs(code - this.snake.dir) % 2
         && code > 36 && code < 41)
         this.snake.dir = keyEvent.keyCode;
-
-    this.onTick();
+    
+    if (code > 36 && code < 41)
+        this.onTick();
 }

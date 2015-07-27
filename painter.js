@@ -13,7 +13,6 @@ function Painter(resolution, rectSize) {
 Painter.colors = {
     apple:      '#15C23C',
     snake:      '#007ACC',
-    //snake:      'rgba(0, 122, 204, 0.6)',
     background: '#3F3F46'
 }
 
@@ -26,21 +25,21 @@ Painter.prototype.drawRect = function (x, y, shape) {
         console.log('y='+y+' is not valid! return');
         return;
     }
-
+    
     //calculating fact coordinates
     var _x = x * this.rectSize;
     var _y = y * this.rectSize;
     var _bodySize = this.rectSize - 2;
     this.context.fillRect(_x + 1, _y + 1, _bodySize, _bodySize);
 
-    if (shape == Snake.direction.right)
-        this.context.fillRect(_x - 1, _y + 1, 2, _bodySize);
-    if (shape == Snake.direction.left)
-        this.context.fillRect(_x + this.rectSize - 1, _y + 1, 2, _bodySize);
-    if (shape == Snake.direction.down)
-        this.context.fillRect(_x + 1, _y - 1, _bodySize, 2);
-    if (shape == Snake.direction.up) 
-        this.context.fillRect(_x + 1, _y + this.rectSize - 1, _bodySize, 2);
+    if (shape & SnakeBlock.SHAPE_LEFT)
+        this.context.fillRect(_x, _y + 1, 1, _bodySize);
+    if (shape & SnakeBlock.SHAPE_RIGHT)
+        this.context.fillRect(_x + this.rectSize - 1, _y + 1, 1, _bodySize);
+    if (shape & SnakeBlock.SHAPE_UP)
+        this.context.fillRect(_x + 1, _y, _bodySize, 1);
+    if (shape & SnakeBlock.SHAPE_DOWN) 
+        this.context.fillRect(_x + 1, _y + this.rectSize - 1, _bodySize, 1);
 };
 
 Painter.prototype.drawCircle = function (x, y) {
@@ -63,7 +62,7 @@ Painter.prototype.drawCircle = function (x, y) {
 }
 
 Painter.prototype.drawSnakeBlock = function(block, shape) {
-    this.drawRect(block.x, block.y, block.dir);
+    this.drawRect(block.x, block.y, block.shape);
 }
 
 // list - array of SnakeBlock instances
