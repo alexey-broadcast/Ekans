@@ -10,10 +10,10 @@ function Painter(resolution, rectSize) {
     this.canvas.style.width  = this.canvas.width  = rectSize * resolution;
 };
 
-Painter.colors = {
-    apple:      '#15C23C',
-    snake:      '#007ACC',
-    background: '#3F3F46'
+Painter.COLORS = {
+    APPLE:      '#15C23C',
+    SNAKE:      '#007ACC',
+    BACKGROUND: '#3F3F46'
 }
 
 Painter.prototype.drawRect = function (x, y, shape) {
@@ -55,7 +55,7 @@ Painter.prototype.drawCircle = function (x, y) {
     var _x = x * this.rectSize + this.rectSize * 0.5;
     var _y = y * this.rectSize + this.rectSize * 0.5;
     var _radius = this.rectSize * 0.5 - 1;
-    this.context.fillStyle = Painter.colors.apple;
+    this.context.fillStyle = Painter.COLORS.APPLE;
     this.context.beginPath();
     this.context.arc(_x, _y, _radius, 0, 2 * Math.PI, false);
     this.context.fill();
@@ -67,7 +67,7 @@ Painter.prototype.drawSnakeBlock = function(block, shape) {
 
 // list - array of SnakeBlock instances
 Painter.prototype.drawSnake = function(list) {
-    this.context.fillStyle = Painter.colors.snake;
+    this.context.fillStyle = Painter.COLORS.SNAKE;
     if(!Array.isArray(list)) {
         console.log('drawBlocks: list is not array!');
         return;

@@ -161,7 +161,7 @@ Scene.prototype.move = function () {
     }
     
     if (!this.isEmptyBlock(head))
-        console.log('GAME OVER!!!');
+        return false;
     
     head.setShape(this.snake.head);
     this.snake.blocks.unshift(head);
@@ -172,13 +172,18 @@ Scene.prototype.move = function () {
         this.snake.blocks.pop();
         this.snake.cleanTailShape();
     }
+
+    return true;
 }
 
+//returns false if GAMEOVER
 Scene.prototype.onTick = function() {
-    this.move();
+    if (!this.move())
+        return false;
     this.painter.clear();
     this.painter.drawSnake(this.snake.blocks);
     this.painter.drawCircle(this.apple.x, this.apple.y);
+    return true;
 }
 
 Scene.prototype.onKeyPressed = function (keyEvent) {
@@ -187,7 +192,4 @@ Scene.prototype.onKeyPressed = function (keyEvent) {
     if (Math.abs(code - this.snake.dir) % 2
         && code > 36 && code < 41)
         this.snake.dir = keyEvent.keyCode;
-    
-    if (code > 36 && code < 41)
-        this.onTick();
 }
