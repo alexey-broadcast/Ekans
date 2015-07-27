@@ -91,9 +91,9 @@ function Snake() {
 }
 
 Snake.prototype.setDir = function (dir) {    
-    if (Math.abs(dir - snake.dir) % 2 
+    if (Math.abs(dir - this.dir) % 2 
         && dir > 36 && dir < 41)
-        snake.dir = dir;
+        this.dir = dir;
 }
 
 Snake.prototype.cleanTailShape = function () {
