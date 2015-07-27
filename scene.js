@@ -215,14 +215,14 @@ Scene.prototype.onTouchEnded = function (touchEvent) {
     var dx = touch.pageX - this.touchStart.x;
     var dy = touch.pageY - this.touchStart.y;
     
-    if (Math.abs(dx) > Math.abs(dy)) {
-        if (dx > 0)
+    if (Math.abs(dy) > Math.abs(dx)) {
+        if (dy > 0)
             this.snake.setDir(Snake.DIRECTION_DOWN);
         else
             this.snake.setDir(Snake.DIRECTION_UP);
     }
     else {
-        if (dy > 0)
+        if (dx > 0)
             this.snake.setDir(Snake.DIRECTION_RIGHT);
         else
             this.snake.setDir(Snake.DIRECTION_LEFT);
