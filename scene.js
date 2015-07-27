@@ -90,7 +90,8 @@ function Snake() {
     });
 }
 
-Snake.prototype.setDir = function (dir) {    
+Snake.prototype.setDir = function (dir) {
+    console.log("setDir("+dir+")");
     if (Math.abs(dir - this.dir) % 2 
         && dir > 36 && dir < 41)
         this.dir = dir;
