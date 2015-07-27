@@ -90,6 +90,13 @@ function Snake() {
     });
 }
 
+Snake.prototype.setDir = function (dir) {
+    console.log("setDir(" + dir + ")");
+    if (Math.abs(dir - this.dir) % 2 
+        && dir > 36 && dir < 41)
+        this.dir = dir;
+}
+
 Snake.prototype.cleanTailShape = function () {
     var tailInd = this.blocks.length - 1;
     this.blocks[tailInd].setShape(this.blocks[tailInd - 1]);
@@ -187,9 +194,35 @@ Scene.prototype.onTick = function() {
 }
 
 Scene.prototype.onKeyPressed = function (keyEvent) {
-    var code = keyEvent.keyCode;
+    this.snake.setDir(keyEvent.keyCode);
+}
 
-    if (Math.abs(code - this.snake.dir) % 2
-        && code > 36 && code < 41)
-        this.snake.dir = keyEvent.keyCode;
+Scene.prototype.onTouchStarted = function (touchEvent) {
+    touchEvent.preventDefault();
+
+    var touch = touchEvent.touches[0];
+    this.touchStart = { x: touch.pageX, y: touch.pageY };
+}
+
+Scene.prototype.onTouchEnded = function (touchEvent) {
+    touchEvent.preventDefault();
+    if (this.touchStart === undefined)
+        return;
+
+    var touch = touchEvent.changedTouches[0];
+    var dx = touch.pageX - this.touchStart.x;
+    var dy = touch.pageY - this.touchStart.y;
+    
+    if (Math.abs(dy) > Math.abs(dx)) {
+        if (dy > 0)
+            this.snake.setDir(Snake.DIRECTION_DOWN);
+        else
+            this.snake.setDir(Snake.DIRECTION_UP);
+    }
+    else {
+        if (dx > 0)
+            this.snake.setDir(Snake.DIRECTION_RIGHT);
+        else
+            this.snake.setDir(Snake.DIRECTION_LEFT);
+    }
 }
