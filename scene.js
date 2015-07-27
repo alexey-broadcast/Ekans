@@ -209,7 +209,7 @@ Scene.prototype.onTouchEnded = function (touchEvent) {
     if (this.touchStart === undefined)
         return;
 
-    var touch = touchEvent.touches[0];
+    var touch = touchEvent.changedTouches[0];
     var dx = touch.pageX - this.touchStart.x;
     var dy = touch.pageY - this.touchStart.y;
     
