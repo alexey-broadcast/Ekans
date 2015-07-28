@@ -8,79 +8,41 @@ Block.prototype.toString = function() {
     return '('+this.x+', '+this.y+')';
 }
 
-function SnakeBlock(x, y, before) {
+function SnakeBlock(x, y, dir) {
     Block.apply(this, arguments);
-    this.setShape(before);
+    this.dir = dir;
 }
 
 SnakeBlock.prototype = Object.create(Block.prototype);
 SnakeBlock.prototype.constructor = SnakeBlock;
 
-SnakeBlock.SHAPE_LEFT   = 1;
-SnakeBlock.SHAPE_UP     = 2;
-SnakeBlock.SHAPE_RIGHT  = 4;
-SnakeBlock.SHAPE_DOWN   = 8;
-
-
-SnakeBlock.prototype.setShape = function (before) {
-    if (before === undefined || this.shape === undefined) {
-        this.shape = 0;
-        return;
-    }
-    this.shape = 0;
-
-    if (before.x == this.x) {
-        if (before.y < this.y) {
-            this.shape |= SnakeBlock.SHAPE_UP;
-            before.shape |= SnakeBlock.SHAPE_DOWN;
-        }
-        else {
-            this.shape |= SnakeBlock.SHAPE_DOWN;
-            before.shape |= SnakeBlock.SHAPE_UP;
-        }
-    }
-    
-    if (before.y == this.y) {
-        if (before.x < this.x) {
-            this.shape |= SnakeBlock.SHAPE_LEFT;
-            before.shape |= SnakeBlock.SHAPE_RIGHT;
-        }
-        else {
-            this.shape |= SnakeBlock.SHAPE_RIGHT;
-            before.shape |= SnakeBlock.SHAPE_LEFT;
-        }
-    }
-}
 
 /////////////////////////////////////////////////////
 
 
 function Snake() {
-    this.blocks = [new SnakeBlock(0, 0), 
-        new SnakeBlock(0, 1), 
-        new SnakeBlock(0, 2), 
-        new SnakeBlock(0, 3), 
-        new SnakeBlock(0, 4), 
-        new SnakeBlock(0, 5), 
-        new SnakeBlock(0, 6), 
-        new SnakeBlock(0, 7), 
-        new SnakeBlock(0, 8), 
-        new SnakeBlock(0, 9), 
-        new SnakeBlock(0, 10),
-        new SnakeBlock(0, 11), 
-        new SnakeBlock(0, 12), 
-        new SnakeBlock(0, 13), 
-        new SnakeBlock(0, 14), 
-        new SnakeBlock(0, 15), 
-        new SnakeBlock(0, 16), 
-        new SnakeBlock(0, 17), 
-        new SnakeBlock(0, 18), 
-        new SnakeBlock(0, 19)
+    this.blocks = [new SnakeBlock(0, 0, Snake.DIRECTION_UP), 
+        new SnakeBlock(0, 1, Snake.DIRECTION_UP), 
+        new SnakeBlock(0, 2, Snake.DIRECTION_UP), 
+        new SnakeBlock(0, 3, Snake.DIRECTION_UP), 
+        new SnakeBlock(0, 4, Snake.DIRECTION_UP), 
+        new SnakeBlock(0, 5, Snake.DIRECTION_UP), 
+        new SnakeBlock(0, 6, Snake.DIRECTION_UP), 
+        new SnakeBlock(0, 7, Snake.DIRECTION_UP), 
+        new SnakeBlock(0, 8, Snake.DIRECTION_UP), 
+        new SnakeBlock(0, 9, Snake.DIRECTION_UP), 
+        new SnakeBlock(0, 10, Snake.DIRECTION_UP),
+        new SnakeBlock(0, 11, Snake.DIRECTION_UP), 
+        new SnakeBlock(0, 12, Snake.DIRECTION_UP), 
+        new SnakeBlock(0, 13, Snake.DIRECTION_UP), 
+        new SnakeBlock(0, 14, Snake.DIRECTION_UP), 
+        new SnakeBlock(0, 15, Snake.DIRECTION_UP), 
+        new SnakeBlock(0, 16, Snake.DIRECTION_UP), 
+        new SnakeBlock(0, 17, Snake.DIRECTION_UP), 
+        new SnakeBlock(0, 18, Snake.DIRECTION_UP), 
+        new SnakeBlock(0, 19, Snake.DIRECTION_UP)
     ];
     
-    for (var i = 0; i < this.blocks.length; ++i)
-        this.blocks[i].setShape(this.blocks[i - 1]);
-
     this.dir = Snake.DIRECTION_RIGHT;
 
     Object.defineProperty(this, 'head', {
@@ -91,16 +53,10 @@ function Snake() {
 }
 
 Snake.prototype.setDir = function (dir) {
-    console.log("setDir("+dir+")");
-    if (Math.abs(dir - this.dir) % 2 
-        && dir > 36 && dir < 41)
+    if ( (dir - this.dir) % 2  &&  dir > 36  &&  dir < 41 )
         this.dir = dir;
 }
 
-Snake.prototype.cleanTailShape = function () {
-    var tailInd = this.blocks.length - 1;
-    this.blocks[tailInd].setShape(this.blocks[tailInd - 1]);
-}
 
 Snake.DIRECTION_LEFT  = 37;
 Snake.DIRECTION_UP    = 38;
@@ -170,14 +126,15 @@ Scene.prototype.move = function () {
     if (!this.isEmptyBlock(head))
         return false;
     
-    head.setShape(this.snake.head);
+    head.dir = this.snake.dir;
+
     this.snake.blocks.unshift(head);
 
     if (head.x === this.apple.x && head.y === this.apple.y)
         this.apple = this.generateApple();
     else {
         this.snake.blocks.pop();
-        this.snake.cleanTailShape();
+        this.snake.blocks[this.snake.blocks.length - 1].dir = 0;
     }
 
     return true;
