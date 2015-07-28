@@ -72,7 +72,7 @@ function Scene(resolution, rectSize) {
     this.resolution = resolution;
     this.rectSize = rectSize;
     
-    this.painter = new Painter(this.resolution, this.rectSize);
+    this.painter = Painter(this.resolution, this.rectSize);
     this.snake = new Snake();
     this.apple = this.generateApple();
 
