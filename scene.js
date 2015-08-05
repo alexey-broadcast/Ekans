@@ -21,29 +21,30 @@ SnakeBlock.prototype.constructor = SnakeBlock;
 
 
 function Snake() {
-    this.blocks = [new SnakeBlock(0, 0, Snake.DIRECTION_UP), 
-        new SnakeBlock(0, 1, Snake.DIRECTION_UP), 
-        new SnakeBlock(0, 2, Snake.DIRECTION_UP), 
-        new SnakeBlock(0, 3, Snake.DIRECTION_UP), 
-        new SnakeBlock(0, 4, Snake.DIRECTION_UP), 
-        new SnakeBlock(0, 5, Snake.DIRECTION_UP), 
-        new SnakeBlock(0, 6, Snake.DIRECTION_UP), 
-        new SnakeBlock(0, 7, Snake.DIRECTION_UP), 
-        new SnakeBlock(0, 8, Snake.DIRECTION_UP), 
-        new SnakeBlock(0, 9, Snake.DIRECTION_UP), 
-        new SnakeBlock(0, 10, Snake.DIRECTION_UP),
-        new SnakeBlock(0, 11, Snake.DIRECTION_UP), 
-        new SnakeBlock(0, 12, Snake.DIRECTION_UP), 
-        new SnakeBlock(0, 13, Snake.DIRECTION_UP), 
-        new SnakeBlock(0, 14, Snake.DIRECTION_UP), 
-        new SnakeBlock(0, 15, Snake.DIRECTION_UP), 
-        new SnakeBlock(0, 16, Snake.DIRECTION_UP), 
-        new SnakeBlock(0, 17, Snake.DIRECTION_UP), 
-        new SnakeBlock(0, 18, Snake.DIRECTION_UP), 
-        new SnakeBlock(0, 19, Snake.DIRECTION_UP)
+    this.blocks = [new SnakeBlock(0, 0, Snake.Direction.UP), 
+        new SnakeBlock(0, 1, Snake.Direction.UP), 
+        new SnakeBlock(0, 2, Snake.Direction.UP), 
+        new SnakeBlock(0, 3, Snake.Direction.UP), 
+        new SnakeBlock(0, 4, Snake.Direction.UP), 
+        new SnakeBlock(0, 5, Snake.Direction.UP), 
+        new SnakeBlock(0, 6, Snake.Direction.UP), 
+        new SnakeBlock(0, 7, Snake.Direction.UP), 
+        new SnakeBlock(0, 8, Snake.Direction.UP), 
+        new SnakeBlock(0, 9, Snake.Direction.UP), 
+        new SnakeBlock(0, 10, Snake.Direction.UP),
+        new SnakeBlock(0, 11, Snake.Direction.UP), 
+        new SnakeBlock(0, 12, Snake.Direction.UP), 
+        new SnakeBlock(0, 13, Snake.Direction.UP), 
+        new SnakeBlock(0, 14, Snake.Direction.UP), 
+        new SnakeBlock(0, 15, Snake.Direction.UP), 
+        new SnakeBlock(0, 16, Snake.Direction.UP), 
+        new SnakeBlock(0, 17, Snake.Direction.UP), 
+        new SnakeBlock(0, 18, Snake.Direction.UP), 
+        new SnakeBlock(0, 19, Snake.Direction.UP)
     ];
     
-    this.dir = Snake.DIRECTION_RIGHT;
+    this.dir = Snake.Direction.RIGHT;
+    this.nextDir = Snake.Direction.RIGHT;
 
     Object.defineProperty(this, 'head', {
         get: function () {
@@ -53,16 +54,18 @@ function Snake() {
 }
 
 Snake.prototype.setDir = function (dir) {
+    console.log('setDir:'+dir);
     if ( (dir - this.dir) % 2  &&  dir > 36  &&  dir < 41 )
-        this.dir = dir;
+        this.nextDir = dir;
 }
 
 
-Snake.DIRECTION_LEFT  = 37;
-Snake.DIRECTION_UP    = 38;
-Snake.DIRECTION_RIGHT = 39;
-Snake.DIRECTION_DOWN  = 40;
-
+Snake.Direction = {
+    LEFT  : 37,
+    UP    : 38,
+    RIGHT : 39,
+    DOWN  : 40
+};
 
 
 
@@ -75,7 +78,7 @@ function Scene(resolution, rectSize) {
     this.painter = Painter(this.resolution, this.rectSize);
     this.snake = new Snake();
     this.apple = this.generateApple();
-
+    
     this.painter.clear();
     this.painter.drawSnake(this.snake.blocks);
     this.painter.drawCircle(this.apple.x, this.apple.y);
@@ -108,18 +111,20 @@ Scene.prototype.isEmptyBlock = function (block) {
 }
 
 Scene.prototype.move = function () {
+    this.snake.dir = this.snake.nextDir;
+
     var head = Object.create(this.snake.head);
     switch (this.snake.dir) {
-        case Snake.DIRECTION_RIGHT:
+        case Snake.Direction.RIGHT:
             head.x++;
             break;
-        case Snake.DIRECTION_LEFT:
+        case Snake.Direction.LEFT:
             head.x--;
             break;
-        case Snake.DIRECTION_UP:
+        case Snake.Direction.UP:
             head.y--;
             break;
-        case Snake.DIRECTION_DOWN:
+        case Snake.Direction.DOWN:
             head.y++;
     }
     
@@ -142,7 +147,7 @@ Scene.prototype.move = function () {
 
 
 //returns false if GAMEOVER
-Scene.prototype.onTick = function() {
+Scene.prototype.onTick = function () {
     if (!this.move())
         return false;
     this.painter.clear();
@@ -175,15 +180,15 @@ Scene.prototype.onTouchEnded = function (touchEvent) {
     
     if (Math.abs(dy) > Math.abs(dx)) {
         if (dy > 0)
-            this.snake.setDir(Snake.DIRECTION_DOWN);
+            this.snake.setDir(Snake.Direction.DOWN);
         else
-            this.snake.setDir(Snake.DIRECTION_UP);
+            this.snake.setDir(Snake.Direction.UP);
     }
     else {
         if (dx > 0)
-            this.snake.setDir(Snake.DIRECTION_RIGHT);
+            this.snake.setDir(Snake.Direction.RIGHT);
         else
-            this.snake.setDir(Snake.DIRECTION_LEFT);
+            this.snake.setDir(Snake.Direction.LEFT);
     }
 
     this.touchStart = undefined;

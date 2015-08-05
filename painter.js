@@ -6,7 +6,7 @@ function Painter(res, rSize) {
     var rectSize = rSize;
     var resolution = res;
     
-    var COLORS = {
+    var Color = {
         APPLE: '#15C23C',
         SNAKE: '#007ACC',
         BACKGROUND: '#3F3F46'
@@ -14,7 +14,7 @@ function Painter(res, rSize) {
     
     canvas.style.height = canvas.height = rectSize * resolution;
     canvas.style.width = canvas.width = rectSize * resolution;
-    canvas.style['background-color'] = COLORS.BACKGROUND;
+    canvas.style['background-color'] = Color.BACKGROUND;
     
     function drawSnakeBlock(block) {
         if (block.x < 0 || block.x >= resolution || block.x === undefined) {
@@ -32,20 +32,20 @@ function Painter(res, rSize) {
         var _bodySize = rectSize - 2;
         context.fillRect(_x + 1, _y + 1, _bodySize, _bodySize);
         
-        if (block.dir === Snake.DIRECTION_RIGHT)
+        if (block.dir === Snake.Direction.RIGHT)
             context.fillRect(_x - 1, _y + 1, 2, _bodySize);
-        if (block.dir === Snake.DIRECTION_LEFT)
+        if (block.dir === Snake.Direction.LEFT)
             context.fillRect(_x + rectSize - 1, _y + 1, 2, _bodySize);
-        if (block.dir === Snake.DIRECTION_DOWN)
+        if (block.dir === Snake.Direction.DOWN)
             context.fillRect(_x + 1, _y - 1, _bodySize, 2);
-        if (block.dir === Snake.DIRECTION_UP)
+        if (block.dir === Snake.Direction.UP)
             context.fillRect(_x + 1, _y + rectSize - 1, _bodySize, 2);
     }
 
     return {
         drawSnake: function (list) {
             // list - array of SnakeBlock instances
-            context.fillStyle = COLORS.SNAKE;
+            context.fillStyle = Color.SNAKE;
             if (!Array.isArray(list)) {
                 console.log('drawSnake: list is not array!');
                 return;
@@ -70,7 +70,7 @@ function Painter(res, rSize) {
             var _x = x * rectSize + rectSize * 0.5;
             var _y = y * rectSize + rectSize * 0.5;
             var _radius = rectSize * 0.5 - 1;
-            context.fillStyle = COLORS.APPLE;
+            context.fillStyle = Color.APPLE;
             context.beginPath();
             context.arc(_x, _y, _radius, 0, 2 * Math.PI, false);
             context.fill();
