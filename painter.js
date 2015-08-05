@@ -1,3 +1,4 @@
+"use strict"
 //resolution - count of logical blocks in width and height
 //rectSize - size of logical block in pixels
 function Painter(res, rSize) {
@@ -32,13 +33,13 @@ function Painter(res, rSize) {
         var _bodySize = rectSize - 2;
         context.fillRect(_x + 1, _y + 1, _bodySize, _bodySize);
         
-        if (block.dir === Snake.Direction.RIGHT)
+        if (block.dir === Scene.SnakeDirection.RIGHT)
             context.fillRect(_x - 1, _y + 1, 2, _bodySize);
-        if (block.dir === Snake.Direction.LEFT)
+        if (block.dir === Scene.SnakeDirection.LEFT)
             context.fillRect(_x + rectSize - 1, _y + 1, 2, _bodySize);
-        if (block.dir === Snake.Direction.DOWN)
+        if (block.dir === Scene.SnakeDirection.DOWN)
             context.fillRect(_x + 1, _y - 1, _bodySize, 2);
-        if (block.dir === Snake.Direction.UP)
+        if (block.dir === Scene.SnakeDirection.UP)
             context.fillRect(_x + 1, _y + rectSize - 1, _bodySize, 2);
     }
 

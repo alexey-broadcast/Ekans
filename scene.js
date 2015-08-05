@@ -1,3 +1,4 @@
+"use strict"
 //logical block with logical coordinates
 function Block(x, y) {
     this.x = x;
@@ -6,6 +7,10 @@ function Block(x, y) {
 
 Block.prototype.toString = function() {
     return '('+this.x+', '+this.y+')';
+}
+
+Block.prototype.isEqual = function (another) {
+    return this.x === another.x && this.y === another.y;
 }
 
 function SnakeBlock(x, y, dir) {
@@ -21,34 +26,41 @@ SnakeBlock.prototype.constructor = SnakeBlock;
 
 
 function Snake() {
-    this.blocks = [new SnakeBlock(0, 0, Snake.Direction.UP), 
-        new SnakeBlock(0, 1, Snake.Direction.UP), 
-        new SnakeBlock(0, 2, Snake.Direction.UP), 
-        new SnakeBlock(0, 3, Snake.Direction.UP), 
-        new SnakeBlock(0, 4, Snake.Direction.UP), 
-        new SnakeBlock(0, 5, Snake.Direction.UP), 
-        new SnakeBlock(0, 6, Snake.Direction.UP), 
-        new SnakeBlock(0, 7, Snake.Direction.UP), 
-        new SnakeBlock(0, 8, Snake.Direction.UP), 
-        new SnakeBlock(0, 9, Snake.Direction.UP), 
-        new SnakeBlock(0, 10, Snake.Direction.UP),
-        new SnakeBlock(0, 11, Snake.Direction.UP), 
-        new SnakeBlock(0, 12, Snake.Direction.UP), 
-        new SnakeBlock(0, 13, Snake.Direction.UP), 
-        new SnakeBlock(0, 14, Snake.Direction.UP), 
-        new SnakeBlock(0, 15, Snake.Direction.UP), 
-        new SnakeBlock(0, 16, Snake.Direction.UP), 
-        new SnakeBlock(0, 17, Snake.Direction.UP), 
-        new SnakeBlock(0, 18, Snake.Direction.UP), 
-        new SnakeBlock(0, 19, Snake.Direction.UP)
+    this.blocks = [new SnakeBlock(0, 0, Scene.SnakeDirection.UP), 
+        new SnakeBlock(0, 1, Scene.SnakeDirection.UP), 
+        new SnakeBlock(0, 2, Scene.SnakeDirection.UP), 
+        new SnakeBlock(0, 3, Scene.SnakeDirection.UP), 
+        new SnakeBlock(0, 4, Scene.SnakeDirection.UP), 
+        new SnakeBlock(0, 5, Scene.SnakeDirection.UP), 
+        new SnakeBlock(0, 6, Scene.SnakeDirection.UP), 
+        new SnakeBlock(0, 7, Scene.SnakeDirection.UP), 
+        new SnakeBlock(0, 8, Scene.SnakeDirection.UP), 
+        new SnakeBlock(0, 9, Scene.SnakeDirection.UP), 
+        new SnakeBlock(0, 10, Scene.SnakeDirection.UP),
+        new SnakeBlock(0, 11, Scene.SnakeDirection.UP), 
+        new SnakeBlock(0, 12, Scene.SnakeDirection.UP), 
+        new SnakeBlock(0, 13, Scene.SnakeDirection.UP), 
+        new SnakeBlock(0, 14, Scene.SnakeDirection.UP), 
+        new SnakeBlock(0, 15, Scene.SnakeDirection.UP), 
+        new SnakeBlock(0, 16, Scene.SnakeDirection.UP), 
+        new SnakeBlock(0, 17, Scene.SnakeDirection.UP), 
+        new SnakeBlock(0, 18, Scene.SnakeDirection.UP), 
+        new SnakeBlock(0, 19, Scene.SnakeDirection.UP)
     ];
     
-    this.dir = Snake.Direction.RIGHT;
-    this.nextDir = Snake.Direction.RIGHT;
+    this.dir = Scene.SnakeDirection.RIGHT;
+    this.nextDir = Scene.SnakeDirection.RIGHT;
 
-    Object.defineProperty(this, 'head', {
-        get: function () {
-            return this.blocks[0];
+    Object.defineProperties(this, {
+        'head': {
+            get: function () {
+                return this.blocks[0];
+            }
+        },
+        'tail': {
+            get: function () {
+                return this.blocks[this.blocks.length - 1];
+            }
         }
     });
 }
@@ -58,14 +70,6 @@ Snake.prototype.setDir = function (dir) {
     if ( (dir - this.dir) % 2  &&  dir > 36  &&  dir < 41 )
         this.nextDir = dir;
 }
-
-
-Snake.Direction = {
-    LEFT  : 37,
-    UP    : 38,
-    RIGHT : 39,
-    DOWN  : 40
-};
 
 
 
@@ -83,6 +87,13 @@ function Scene(resolution, rectSize) {
     this.painter.drawSnake(this.snake.blocks);
     this.painter.drawCircle(this.apple.x, this.apple.y);
 }
+
+Scene.SnakeDirection = {
+    LEFT: 37,
+    UP: 38,
+    RIGHT: 39,
+    DOWN: 40
+};
 
 Scene.prototype.generateApple = function () {
     var generateRandom = (function () {
@@ -104,7 +115,7 @@ Scene.prototype.isEmptyBlock = function (block) {
         return false;
 
     for (var i in this.snake.blocks)
-        if(block.x === this.snake.blocks[i].x && block.y === this.snake.blocks[i].y)
+        if(block.isEqual(this.snake.blocks[i]))
             return false;
 
     return true;
@@ -113,29 +124,29 @@ Scene.prototype.isEmptyBlock = function (block) {
 Scene.prototype.move = function () {
     this.snake.dir = this.snake.nextDir;
 
-    var head = Object.create(this.snake.head);
+    var newHead = Object.create(this.snake.head);
     switch (this.snake.dir) {
-        case Snake.Direction.RIGHT:
-            head.x++;
+        case Scene.SnakeDirection.RIGHT:
+            newHead.x++;
             break;
-        case Snake.Direction.LEFT:
-            head.x--;
+        case Scene.SnakeDirection.LEFT:
+            newHead.x--;
             break;
-        case Snake.Direction.UP:
-            head.y--;
+        case Scene.SnakeDirection.UP:
+            newHead.y--;
             break;
-        case Snake.Direction.DOWN:
-            head.y++;
+        case Scene.SnakeDirection.DOWN:
+            newHead.y++;
     }
     
-    if (!this.isEmptyBlock(head))
+    if (!this.isEmptyBlock(newHead) && !newHead.isEqual(this.snake.tail))
         return false;
     
-    head.dir = this.snake.dir;
+    newHead.dir = this.snake.dir;
 
-    this.snake.blocks.unshift(head);
+    this.snake.blocks.unshift(newHead);
 
-    if (head.x === this.apple.x && head.y === this.apple.y)
+    if (newHead.x === this.apple.x && newHead.y === this.apple.y)
         this.apple = this.generateApple();
     else {
         this.snake.blocks.pop();
@@ -180,15 +191,15 @@ Scene.prototype.onTouchEnded = function (touchEvent) {
     
     if (Math.abs(dy) > Math.abs(dx)) {
         if (dy > 0)
-            this.snake.setDir(Snake.Direction.DOWN);
+            this.snake.setDir(Scene.SnakeDirection.DOWN);
         else
-            this.snake.setDir(Snake.Direction.UP);
+            this.snake.setDir(Scene.SnakeDirection.UP);
     }
     else {
         if (dx > 0)
-            this.snake.setDir(Snake.Direction.RIGHT);
+            this.snake.setDir(Scene.SnakeDirection.RIGHT);
         else
-            this.snake.setDir(Snake.Direction.LEFT);
+            this.snake.setDir(Scene.SnakeDirection.LEFT);
     }
 
     this.touchStart = undefined;
