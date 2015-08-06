@@ -2,11 +2,50 @@
 <html>
 	<head>
 		<title>Ekans the pokémon</title>
+        <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.2/material.light_green-indigo.min.css">
+        <script src="https://storage.googleapis.com/code.getmdl.io/1.0.2/material.min.js"></script>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
         <link rel="stylesheet" type="text/css" href="stylesheet.css" />
 	</head>
 	
 	<body>
-		<canvas id="canvas" style="background-color: #2d2d30"></canvas>
+        <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+            <header class="mdl-layout__header">
+                <div class="mdl-layout__header-row">
+                    <!-- Title -->
+                    <span class="mdl-layout-title">Ekans the pokémon</span>
+                    <!-- Add spacer, to align navigation to the right -->
+                    <div class="mdl-layout-spacer"></div>
+                    <!-- Navigation. We hide it in small screens. -->
+                    <nav class="mdl-navigation mdl-layout--large-screen-only">
+                        <a class="mdl-navigation__link" href="">Link</a>
+                        <a class="mdl-navigation__link" href="">Link</a>
+                        <a class="mdl-navigation__link" href="">Link</a>
+                        <a class="mdl-navigation__link" href="">Link</a>
+                    </nav>
+                </div>
+            </header>
+            <main class="mdl-layout__content">
+                <div id="layout-main">
+                    <div id="layout-left"></div>
+                    <div id="layout-center">
+                        <canvas class="mdl-shadow--6dp" id="canvas"></canvas>
+
+                        <div id="layout-buttons">
+                            <div id="spacer"></div>
+                            <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored mdl-js-ripple-effect mdl-shadow--3dp" id="btn-new">
+                                <i class="material-icons">refresh</i>
+                            </button>
+
+                            <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored mdl-js-ripple-effect mdl-shadow--3dp" id="btn-pause">
+                                <i class="material-icons">pause</i>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="layout-right"></div>
+                </div>
+            </main>
+        </div>	
 
         <script type="text/javascript" src="painter.js"></script>
         <script type="text/javascript" src="scene.js"></script>

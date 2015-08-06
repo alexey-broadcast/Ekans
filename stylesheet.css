@@ -1,8 +1,45 @@
-canvas {
+#layout-main {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    align-content: flex-start;
+    margin: auto;
+}
+
+#layout-left, #layout-right {
+    flex-grow: 1;
+}
+
+#layout-center {
+    /*border: 1px solid red;*/
+    flex-grow: 0;
+}
+
+#layout-buttons {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    align-content: flex-start;
+}
+
+#spacer {
+    /*border: 1px solid blue;*/
+    flex-grow: 10;
+}
+
+#btn-new, #btn-pause {
+    flex-grow: 0;
+    margin-left: 20px;
+    z-index: 999;
+}
+
+canvas {    
     display: block;
     margin: 40px auto 20px;
     border: 1px solid #333;
-
-    -webkit-box-shadow: 0 0 16px 2px rgba(0,0,0,0.8);
-    box-shadow: 0 0 16px 2px rgba(0,0,0,0.8);
+    background-color: #2d2d30;
 }
