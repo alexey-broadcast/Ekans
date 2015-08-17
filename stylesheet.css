@@ -22,13 +22,22 @@
     flex-direction: row;
     flex-wrap: nowrap;
     justify-content: space-between;
-    align-items: flex-start;
-    align-content: flex-start;
+    align-items: stretch;
+    align-content: stretch;
 }
 
 #spacer {
     /*border: 1px solid blue;*/
     flex-grow: 10;
+}
+
+#div-score {
+	display: flex;
+    flex-direction: row;
+    
+    justify-content: flex-start; /* align items in Main Axis */
+    align-items: stretch; /* align items in Cross Axis */
+    align-content: stretch; /* Extra space in Cross Axis */
 }
 
 #btn-new, #btn-pause {

@@ -15,7 +15,7 @@
         loopId = setInterval(function () {
             if (!scene.onTick())
                 clearInterval(loopId);
-        }, 300);
+        }, 150);
     }
 
     document.getElementById('btn-new').onclick = newGame;
