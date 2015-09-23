@@ -26,27 +26,10 @@ SnakeBlock.prototype.constructor = SnakeBlock;
 
 
 function Snake() {
-    this.blocks = [new SnakeBlock(0, 0, Scene.SnakeDirection.UP), 
-        new SnakeBlock(0, 1, Scene.SnakeDirection.UP), 
-        new SnakeBlock(0, 2, Scene.SnakeDirection.UP), 
-        new SnakeBlock(0, 3, Scene.SnakeDirection.UP), 
-        new SnakeBlock(0, 4, Scene.SnakeDirection.UP), 
-        new SnakeBlock(0, 5, Scene.SnakeDirection.UP), 
-        new SnakeBlock(0, 6, Scene.SnakeDirection.UP), 
-        new SnakeBlock(0, 7, Scene.SnakeDirection.UP), 
-        new SnakeBlock(0, 8, Scene.SnakeDirection.UP), 
-        new SnakeBlock(0, 9, Scene.SnakeDirection.UP), 
-        new SnakeBlock(0, 10, Scene.SnakeDirection.UP),
-        new SnakeBlock(0, 11, Scene.SnakeDirection.UP), 
-        new SnakeBlock(0, 12, Scene.SnakeDirection.UP), 
-        new SnakeBlock(0, 13, Scene.SnakeDirection.UP), 
-        new SnakeBlock(0, 14, Scene.SnakeDirection.UP), 
-        new SnakeBlock(0, 15, Scene.SnakeDirection.UP), 
-        new SnakeBlock(0, 16, Scene.SnakeDirection.UP), 
-        new SnakeBlock(0, 17, Scene.SnakeDirection.UP), 
-        new SnakeBlock(0, 18, Scene.SnakeDirection.UP), 
-        new SnakeBlock(0, 19, Scene.SnakeDirection.UP)
-    ];
+    this.blocks = [];
+    for(var i = 0; i < 20; ++i) {
+        this.blocks.push(new SnakeBlock(0, i, Scene.SnakeDirection.UP));
+    };
     
     this.dir = Scene.SnakeDirection.RIGHT;
     this.nextDir = Scene.SnakeDirection.RIGHT;
