@@ -1,7 +1,20 @@
 (function () {
-    "use strict"
+    "use strict";
     var scene;
     var loopId;
+
+    var newGame_btn = document.getElementById('btn-new');
+    var pause_btn = document.getElementById('btn-pause');
+    var pauseText = document.querySelector('#btn-pause i');
+    var PLAY_TEXT = "play_arrow";
+    var PAUSE_TEXT = "pause";
+
+    function gameInterval() {
+        return setInterval(function () {
+            if (!scene.onTick())
+                clearInterval(loopId);
+        }, 150);
+    }
 
     function newGame() {
         scene = new Scene(20, 25);
@@ -12,13 +25,24 @@
         if (loopId)
             clearInterval(loopId);
 
-        loopId = setInterval(function () {
-            if (!scene.onTick())
-                clearInterval(loopId);
-        }, 150);
+        loopId = gameInterval();
+        pauseText.innerHTML = PAUSE_TEXT;
     }
 
-    document.getElementById('btn-new').onclick = newGame;
+    function togglePause() {
+        if(loopId) {
+            clearInterval(loopId);
+            loopId = false;
+            pauseText.innerHTML = PLAY_TEXT;
+        }
+        else {
+            loopId = gameInterval();
+            pauseText.innerHTML = PAUSE_TEXT;
+        }
+    }
+
+    newGame_btn.onclick = newGame;
+    pause_btn.onclick = togglePause;
 
     newGame();
 }) ();  
